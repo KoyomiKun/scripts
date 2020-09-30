@@ -1,0 +1,4 @@
+if [[ -f "/usr/share/pixmaps/mybg.png" ]]; then
+	echo "132432543zz" | sudo -S rm /usr/share/pixmaps/mybg.png
+fi
+echo "132432543zz" | sudo -S cp $1 /usr/share/pixmaps/mybg.png

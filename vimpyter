@@ -1,0 +1,9 @@
+#!/usr/bin/python3
+import sys
+import os
+file_name = '/home/komikun/.vim/plugged/jupyterkernel.vim/autoload/jupyterkernel/jupyterkernel_client.py'
+order = 'python3 {} --vim_port {{}}'.format(file_name)
+if len(sys.argv) == 1:
+    os.system(order.format(55555))
+elif len(sys.argv) == 2 and sys.argv[1].isdigit():
+    os.system(order.format(int(sys.argv[1])))

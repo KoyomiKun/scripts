@@ -1,0 +1,72 @@
+#!/usr/bin/python
+
+from numpy import random
+import sys
+from collections import namedtuple
+
+dic = namedtuple("entry", ["Eng", "Chi", "Pron"])
+dics = []
+file_name = "/home/komikun/Documents/wudao-dict/wudao-dict/usr/{}.txt"
+if len(sys.argv) == 2:
+    file_name = file_name.format(sys.argv[1])
+else:
+    file_name = file_name.format("notebook")
+with open(file_name, "r") as f:
+    line = f.readline()
+    while line:
+        li = list(filter(None, line.split('  ')))
+        # print(li)
+        dc = dic(Eng=li[0], Chi=li[-1][:-1].strip(), Pron=None)
+        if len(li) == 3:
+            dc = dc._replace(Pron=li[-2].strip())
+        dics.append(dc)
+        line = f.readline()
+# print(dics)
+info = "~ Input the nums of words (<{}) you want to review:\n".format(
+    len(dics))
+nums = input(info)
+while not nums.isdigit():
+    nums = input(info)
+nums = int(nums)
+
+
+def cal_correct(origin_dic: list):
+    correct = 0
+    wrong_dic = []
+    for sample in origin_dic:
+        Eng = input("\033[0;34m{}\033[0m:\n".format(sample.Chi))
+        if Eng == sample.Eng:
+            correct += 1
+        elif Eng == ":q":
+            return [], len(origin_dic)
+        else:
+            wrong_dic.append(sample)
+            info = "Wrong! The right answer is \033[0;31m{} \033[0;33m{}\033[0m".format(
+                sample.Eng, sample.Pron if sample.Pron else "")
+            print(info)
+    return wrong_dic, correct
+
+
+while True:
+    info = "~ randomly choose {} words: \n".format(nums)
+    print(info)
+    smp = random.choice(len(dics), size=nums, replace=False)
+    smp_dics = [dics[i] for i in smp]
+    correct = 0
+    while smp_dics:
+        entry_num = len(smp_dics)
+        smp_dics, correct = cal_correct(smp_dics)
+        print("Your accuracy is {:.2%}\n".format(correct/entry_num))
+
+    info = """
+:q                 exit the program
+:change n          change the random num
+:c(default)        next batch
+"""
+    order = input(info)
+    if order == ":q":
+        break
+    elif order.startswith(":change") and order.split()[-1].isdigit():
+        nums = int(order.split()[-1])
+    else:
+        continue
